@@ -6,17 +6,17 @@ Introduction goes here.
 Installation
 ------------
 
-Add spree_line-item-discount to your Gemfile:
+Add spree_line_item_discount to your Gemfile:
 
 ```ruby
-gem 'spree_line-item-discount'
+gem 'spree_line_item_discount'
 ```
 
 Bundle your dependencies and run the installation generator:
 
 ```shell
 bundle
-bundle exec rails g spree_line-item-discount:install
+bundle exec rails g spree_line_item_discount:install
 ```
 
 Testing
@@ -33,7 +33,7 @@ When testing your applications integration with this extension you may use it's 
 Simply add this require statement to your spec_helper:
 
 ```ruby
-require 'spree_line-item-discount/factories'
+require 'spree_line_item_discount/factories'
 ```
 
 Copyright (c) 2014 [name of extension creator], released under the New BSD License
