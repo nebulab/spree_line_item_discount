@@ -1,35 +1,97 @@
 module Spree
   class Promotion
     module Actions
-      class CreateVariantAdjustments < CreateItemAdjustments
+      class CreateVariantAdjustments < PromotionAction
+        include Spree::Core::CalculatedAdjustments
+
+        has_many :adjustments, as: :source
 
         has_many :promotion_action_variants, foreign_key: :promotion_action_id
         has_many :variants, through: :promotion_action_variants
         accepts_nested_attributes_for :promotion_action_variants
 
-        def variant_ids_string
-          variant_ids.join(',')
-        end
+        delegate :eligible?, to: :promotion
 
-        def variant_ids_string=(s)
-          self.variant_ids = s.to_s.split(',').map(&:strip)
-        end
+        before_validation :ensure_action_has_calculator
+        before_destroy :deals_with_adjustments
 
         def perform(payload = {})
           order = payload[:order]
+          # Find only the line items which have not already been adjusted by this promotion
+          # HACK: Need to use [0] because `pluck` may return an empty array, which AR helpfully
+          # coverts to meaning NOT IN (NULL) and the DB isn't happy about that.
+          already_adjusted_line_items = [0] + self.adjustments.pluck(:adjustable_id)
           result = false
-          variants_to_adjust(order).each do |line_item|
-            result ||= self.create_adjustment(line_item, order)
+          order.line_items.where("id NOT IN (?)", already_adjusted_line_items).find_each do |line_item|
+            current_result = self.create_adjustment(line_item, order)
+            result ||= current_result
           end
           return result
         end
 
-        private
-
-        def variants_to_adjust(order)
-          excluded_ids = self.adjustments.pluck(:adjustable_id)
-          order.line_items.where(variant_id: variants.pluck(:id))
+        def create_adjustment(adjustable, order)
+          amount = self.compute_amount(adjustable)
+          return if amount == 0
+          return if variant_ids.present? and !variant_ids.include?(adjustable.variant.id)
+          self.adjustments.create!(
+            amount: amount,
+            adjustable: adjustable,
+            order: order,
+            label: "#{Spree.t(:promotion)} (#{promotion.name})",
+          )
+          true
         end
+
+        # Ensure a negative amount which does not exceed the sum of the order's
+        # item_total and ship_total
+        def compute_amount(adjustable)
+          promotion_amount = self.calculator.compute(adjustable).to_f.abs
+
+          [adjustable.amount, promotion_amount].min * -1
+        end
+
+         def variant_ids_string
+           variant_ids.join(',')
+         end
+
+         def variant_ids_string=(s)
+           self.variant_ids = s.to_s.split(',').map(&:strip)
+         end
+
+        private
+          # Tells us if there if the specified promotion is already associated with the line item
+          # regardless of whether or not its currently eligible. Useful because generally
+          # you would only want a promotion action to apply to line item no more than once.
+          #
+          # Receives an adjustment +source+ (here a PromotionAction object) and tells
+          # if the order has adjustments from that already
+          def promotion_credit_exists?(adjustable)
+            self.adjustments.where(:adjustable_id => adjustable.id).exists?
+          end
+
+          def ensure_action_has_calculator
+            return if self.calculator
+            self.calculator = Calculator::PercentOnLineItem.new
+          end
+
+          def deals_with_adjustments
+            adjustment_scope = self.adjustments.includes(:order).references(:spree_orders)
+
+            # For incomplete orders, remove the adjustment completely.
+            adjustment_scope.where("spree_orders.completed_at IS NULL").each do |adjustment|
+              adjustment.destroy
+            end
+
+            # For complete orders, the source will be invalid.
+            # Therefore we nullify the source_id, leaving the adjustment in place.
+            # This would mean that the order's total is not altered at all.
+            adjustment_scope.where("spree_orders.completed_at IS NOT NULL").each do |adjustment|
+              adjustment.update_columns(
+                source_id: nil,
+                updated_at: Time.now,
+              )
+            end
+          end
       end
     end
   end
