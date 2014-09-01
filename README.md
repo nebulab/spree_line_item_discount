@@ -1,7 +1,8 @@
-SpreeLine-item-discount
+Spree Line Item Discount
 =======================
 
-Introduction goes here.
+Spree extension that add the ability to create a different discount in
+percentage for each item in the cart with the same coupon code.
 
 Installation
 ------------
@@ -36,4 +37,4 @@ Simply add this require statement to your spec_helper:
 require 'spree_line_item_discount/factories'
 ```
 
-Copyright (c) 2014 [name of extension creator], released under the New BSD License
+Copyright (c) 2014 Nebulab, released under the New BSD License
