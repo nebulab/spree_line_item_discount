@@ -32,7 +32,7 @@ module Spree
         def create_adjustment(adjustable, order)
           amount = self.compute_amount(adjustable)
           return if amount == 0
-          return if variant_ids.present? and !variant_ids.include?(adjustable.variant.id)
+          return if adjustable_variant_ids.present? and !adjustable_variant_ids.include?(adjustable.variant.id)
           self.adjustments.create!(
             amount: amount,
             adjustable: adjustable,
@@ -50,13 +50,17 @@ module Spree
           [adjustable.amount, promotion_amount].min * -1
         end
 
-         def variant_ids_string
-           variant_ids.join(',')
-         end
+        def adjustable_variant_ids
+          variants.map{ |variant| variant.is_master? ? variant.product.variants.map(&:id) << variant.id : variant.id }.flatten
+        end
 
-         def variant_ids_string=(s)
-           self.variant_ids = s.to_s.split(',').map(&:strip)
-         end
+        def variant_ids_string
+          variant_ids.join(',')
+        end
+
+        def variant_ids_string=(s)
+          self.variant_ids = s.to_s.split(',').map(&:strip)
+        end
 
         private
           # Tells us if there if the specified promotion is already associated with the line item
