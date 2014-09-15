@@ -31,10 +31,10 @@ $.fn.variantPicker = function () {
       }
     },
     formatResult: function (variant) {
-      return variant.name + ' ' + variant.sku;
+      return variant.name + ' ' + variant.sku + ( variant.is_master ? ' (Master)' : '');
     },
     formatSelection: function (variant) {
-      return variant.name + ' ' + variant.sku;
+      return variant.name + ' ' + variant.sku + ( variant.is_master ? ' (Master)' : '');
     }
   });
 };
