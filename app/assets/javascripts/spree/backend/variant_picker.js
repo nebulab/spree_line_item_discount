@@ -7,20 +7,18 @@ $.fn.variantPicker = function () {
     initSelection: function (element, callback) {
       $.get(Spree.routes.variants_api, {
         q: { id_in: element.val().split(',') },
-        token: Spree.api_key
       }, function (data) {
         callback(data.variants);
       });
     },
     ajax: {
-      url: Spree.routes.variants_api,
+      url: Spree.url(Spree.routes.variants_api),
       datatype: 'json',
       data: function (term, page) {
         return {
           q: {
             product_name_or_sku_cont: term,
           },
-          token: Spree.api_key
         };
       },
       results: function (data, page) {
