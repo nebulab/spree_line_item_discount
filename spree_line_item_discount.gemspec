@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
 Spree extension that add the ability to create a different discount in
 percentage for each item in the cart with the same coupon code.
 '''
-  s.required_ruby_version = '>= 1.9.3'
+  s.required_ruby_version = '>= 2.0.0'
 
   s.author    = 'NebuLab'
   s.email     = 'info@nebulab.it'
@@ -19,7 +19,7 @@ percentage for each item in the cart with the same coupon code.
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency 'spree_core', '>= 2.2'
+  s.add_dependency 'spree_core', '>= 2.4'
 
   s.add_development_dependency 'capybara', '~> 2.1'
   s.add_development_dependency 'coffee-rails'
