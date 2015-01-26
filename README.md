@@ -1,7 +1,7 @@
 Spree Line Item Discount
 =======================
 
-Spree extension that add the ability to create a different discount in
+Spree extension that adds the ability to create a different discount in
 percentage for each item in the cart with the same coupon code.
 
 Installation
