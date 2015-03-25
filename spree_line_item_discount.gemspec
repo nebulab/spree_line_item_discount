@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_line_item_discount'
-  s.version     = '2.3.1'
+  s.version     = '2.4.1'
   s.summary     = 'Spree line item discount'
   s.description = '''
 Spree extension that add the ability to create a different discount in
