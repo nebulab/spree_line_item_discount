@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_line_item_discount'
-  s.version     = '2.3.1'
+  s.version     = '3.0.0'
   s.summary     = 'Spree line item discount'
   s.description = '''
 Spree extension that add the ability to create a different discount in
@@ -26,7 +26,7 @@ percentage for each item in the cart with the same coupon code.
   s.add_development_dependency 'database_cleaner'
   s.add_development_dependency 'factory_girl', '~> 4.4'
   s.add_development_dependency 'ffaker'
-  s.add_development_dependency 'rspec-rails',  '~> 2.13'
+  s.add_development_dependency 'rspec-rails',  '~> 3.1.0'
   s.add_development_dependency 'sass-rails', '~> 4.0.2'
   s.add_development_dependency 'selenium-webdriver'
   s.add_development_dependency 'simplecov'
