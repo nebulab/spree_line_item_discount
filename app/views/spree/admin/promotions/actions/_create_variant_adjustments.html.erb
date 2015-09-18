@@ -1,10 +1,10 @@
-<div class="calculator-fields row">
-  <div class="field alpha omega eight columns products_rule_products">
+<div class="calculator-fields panel-body">
+  <div class="form-group field alpha omega eight columns products_rule_products">
     <%= label_tag "#{param_prefix}_variant_ids_string", Spree.t('product_rule.choose_variants') %>
     <%= hidden_field_tag "#{param_prefix}[variant_ids_string]", promotion_action.variant_ids.join(","), :class => "variant_picker fullwidth" %>
   </div>
 
-  <div class="field alpha four columns">
+  <div class="form-group field alpha four columns">
     <% field_name = "#{param_prefix}[calculator_type]" %>
     <%= label_tag field_name, Spree.t(:calculator) %>
     <%= select_tag field_name,
@@ -15,7 +15,7 @@
     <% end %>
   </div>
 
-  <div class="settings field omega four columns">
+  <div class="form-group settings field omega four columns">
     <% promotion_action.calculator.preferences.keys.map do |key| %>
       <% field_name = "#{param_prefix}[calculator_attributes][preferred_#{key}]" %>
       <%= label_tag field_name, Spree.t(key.to_s) %>
